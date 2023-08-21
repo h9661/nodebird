@@ -99,3 +99,37 @@ belongsTo의 table에 hasOne의 key id column이 추가된다.
 `N:M -> belongsToMany, belongsToMany`
 
 두 table 사이의 관계가 id 값으로 나타난 table이 생성된다. table의 이름은 through 속성에 담긴 value로 결정된다.
+
+8. Sequelize에서 관계 정의할 때 as는 무엇일까?
+
+Sequelize에서 `as`는 관계 정의 시에 사용되는 옵션 중 하나입니다. 이 옵션은 모델 간의 관계를 정의하거나 쿼리할 때 사용되는 별칭(alias)을 설정하는 역할을 합니다. `as` 옵션을 사용하여 관계에 대한 별칭을 지정하면, 해당 별칭을 통해 쿼리를 작성하거나 관계를 사용할 수 있습니다.
+
+`as` 옵션은 주로 다음 두 가지 상황에서 활용됩니다:
+
+1. **관계 정의 시에 별칭 지정**: Sequelize에서 모델 간의 관계를 정의할 때, 관계에 사용할 이름을 `as` 옵션으로 지정할 수 있습니다. 이를 통해 해당 관계를 추후에 더 쉽게 사용할 수 있습니다.
+
+   예시:
+   ```javascript
+   User.belongsToMany(User, {
+     foreignKey: "followingId",
+     as: "Followers",
+     through: "Follow",
+   });
+   ```
+   위의 코드에서 `as: "Followers"`는 "User" 모델이 팔로워를 나타내는 관계를 "Followers"라는 이름으로 지정하고 있습니다.
+
+2. **쿼리 시에 별칭 활용**: 관계 정의에 지정한 `as` 별칭은 쿼리 시에 활용할 수 있습니다. 이를 통해 별칭을 사용하여 관계를 참조하고 조건을 지정할 수 있습니다.
+
+   예시:
+   ```javascript
+   User.findAll({
+     include: {
+       model: User,
+       as: "Followers",
+     },
+   });
+   ```
+   위의 코드에서 `as: "Followers"`를 사용하여 "Followers" 관계를 포함하여 `User` 모델을 조회하고 있습니다.
+
+이처럼 `as` 옵션은 관계를 다루는 과정에서 읽기 쉬운 코드를 작성하고 별칭을 활용하여 관계를 구분하는 데 도움을 줍니다.
+
