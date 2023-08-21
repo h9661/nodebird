@@ -10,6 +10,8 @@ dotenv.config();
 
 const app = express();
 
+const pageRouter = require("./routes/page");
+
 app.set("port", process.env.PORT || 3000);
 app.set("view engine", "html");
 nunjucks.configure("views", {
@@ -33,6 +35,8 @@ app.use(
         },
     })
 );
+
+app.use("/", pageRouter);
 
 app.use((req, res, next) => {
     const error = new Error(`${req.method} ${req.url} 라우터가 없습니다.`);
