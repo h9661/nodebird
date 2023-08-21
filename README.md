@@ -85,11 +85,17 @@ Nunjucks에서 블록은 `템플릿 상속과 확장`을 위해 사용됩니다.
 6. `location.reload()` 현재 page를 새로고침한다. 매개변수의 값을 true로 넣으면 브라우저의 캐시를 무시하고 새로고침을 수행한다.
 
 7. Sequelize에서 관계를 표현하는 방법
+
 `1:N -> hasMany, belongsTo`
+
 belongsTo의 table에 hasMany의 key id column이 추가된다.
 
+
 `1:1 -> hasOne, belongsTo`
+
 belongsTo의 table에 hasOne의 key id column이 추가된다.
 
+
 `N:M -> belongsToMany, belongsToMany`
+
 두 table 사이의 관계가 id 값으로 나타난 table이 생성된다. table의 이름은 through 속성에 담긴 value로 결정된다.
