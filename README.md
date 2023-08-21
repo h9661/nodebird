@@ -8,17 +8,17 @@
 - [ ] model의 관계들과 설정법 이해하기
 
 ## 학습 정리
-1. dotenv
+### dotenv
 
 https://www.daleseo.com/js-dotenv/
 
-2. morgan
+### morgan
 
 node js 로그 관리 라이브러리이다. 자세하게 알 필요는 없을 것 같다. 진행하면서 배우자.
 
-3. .env 파일에 환경 변수를 집어넣으면, dotenv 라이브러리가 읽어서 process.env에 넣어준다.
+### .env 파일에 환경 변수를 집어넣으면, dotenv 라이브러리가 읽어서 process.env에 넣어준다.
 
-4. res.locals는 뭘까?
+### res.locals는 뭘까?
 
 `res.locals`는 Express.js에서 사용되는 객체입니다. 이 객체는 미들웨어에서 다음 미들웨어나 라우터 핸들러로 데이터를 전달하는 데 사용됩니다. `res.locals`에 저장된 데이터는 해당 요청에 대한 라이프사이클 동안 유지되며, 이를 통해 데이터 공유와 전달이 용이해집니다.
 
@@ -37,7 +37,7 @@ app.get('/', function(req, res) {
 ```
 위의 코드 예시에서 `res.locals.currentUser`는 모든 라우터 핸들러에서 접근 가능한 데이터로 사용될 수 있습니다. 이를 통해 중복된 코드를 피하고 요청 처리 과정에서 데이터를 효율적으로 전달할 수 있습니다.
 
-5.
+###
 ```
 {% block <name>}
 {% endblock %}
@@ -82,25 +82,114 @@ Nunjucks에서 블록은 `템플릿 상속과 확장`을 위해 사용됩니다.
 ```
 이 예시에서 `base.njk`는 레이아웃을 정의하고, `page.njk`은 `base.njk`을 확장하여 페이지의 콘텐츠를 채우고 있습니다. Nunjucks의 block과 extends 문법을 사용하여 템플릿을 구성하고 확장할 수 있습니다.
 
-6. `location.reload()` 현재 page를 새로고침한다. 매개변수의 값을 true로 넣으면 브라우저의 캐시를 무시하고 새로고침을 수행한다.
+### `location.reload()` 현재 page를 새로고침한다. 매개변수의 값을 true로 넣으면 브라우저의 캐시를 무시하고 새로고침을 수행한다.
 
-7. Sequelize에서 관계를 표현하는 방법
+### Sequelize에서 관계를 표현하는 방법
 
-`1:N -> hasMany, belongsTo`
+1. **1:N (One-to-Many) 관계 예시**:
+   1명의 작성자(User)가 여러 개의 게시물(Post)을 작성하는 관계입니다.
 
-belongsTo의 table에 hasMany의 key id column이 추가된다.
+```javascript
+const { Sequelize, DataTypes } = require('sequelize');
+const sequelize = new Sequelize('database', 'username', 'password', {
+  dialect: 'mysql',
+  host: 'localhost',
+});
 
+const User = sequelize.define('User', {
+  username: DataTypes.STRING,
+});
 
-`1:1 -> hasOne, belongsTo`
+const Post = sequelize.define('Post', {
+  title: DataTypes.STRING,
+});
 
-belongsTo의 table에 hasOne의 key id column이 추가된다.
+// 1:N 관계 정의
+User.hasMany(Post);
+Post.belongsTo(User);
 
+// 테이블 생성 및 관계 설정
+sequelize.sync({ force: true }).then(async () => {
+  const user = await User.create({ username: 'john_doe' });
+  await user.createPost({ title: 'First Post' });
+  await user.createPost({ title: 'Second Post' });
 
-`N:M -> belongsToMany, belongsToMany`
+  const posts = await Post.findAll({ include: User });
+  console.log(posts);
+});
+```
+
+2. **1:1 (One-to-One) 관계 예시**:
+   각각의 사용자(User)가 하나의 프로필(Profile)을 가지는 관계입니다.
+
+```javascript
+const { Sequelize, DataTypes } = require('sequelize');
+const sequelize = new Sequelize('database', 'username', 'password', {
+  dialect: 'mysql',
+  host: 'localhost',
+});
+
+const User = sequelize.define('User', {
+  username: DataTypes.STRING,
+});
+
+const Profile = sequelize.define('Profile', {
+  fullName: DataTypes.STRING,
+});
+
+// 1:1 관계 정의
+User.hasOne(Profile);
+Profile.belongsTo(User);
+
+// 테이블 생성 및 관계 설정
+sequelize.sync({ force: true }).then(async () => {
+  const user = await User.create({ username: 'jane_doe' });
+  await user.createProfile({ fullName: 'Jane Doe' });
+
+  const profile = await Profile.findOne({ include: User });
+  console.log(profile);
+});
+```
+
+3. **N:M (Many-to-Many) 관계 예시**:
+   여러 학생(Student)이 여러 과목(Subject)을 수강하는 관계입니다.
+
+```javascript
+const { Sequelize, DataTypes } = require('sequelize');
+const sequelize = new Sequelize('database', 'username', 'password', {
+  dialect: 'mysql',
+  host: 'localhost',
+});
+
+const Student = sequelize.define('Student', {
+  name: DataTypes.STRING,
+});
+
+const Subject = sequelize.define('Subject', {
+  title: DataTypes.STRING,
+});
+
+// N:M 관계 정의
+Student.belongsToMany(Subject, { through: 'StudentSubject' });
+Subject.belongsToMany(Student, { through: 'StudentSubject' });
+
+// 테이블 생성 및 관계 설정
+sequelize.sync({ force: true }).then(async () => {
+  const student = await Student.create({ name: 'Alice' });
+  const subject = await Subject.create({ title: 'Math' });
+
+  await student.addSubject(subject);
+  const subjects = await student.getSubjects();
+  console.log(subjects);
+});
+```
+
+위의 코드 예시에서 Sequelize를 사용하여 각각의 관계를 정의하고 테이블을 생성하고 관계를 설정하고 있습니다. 이러한 예시를 참고하여 1:N, 1:1, N:M 관계를 각각 어떻게 정의하고 활용할 수 있는지 이해하실 수 있을 것입니다.
+
 
 두 table 사이의 관계가 id 값으로 나타난 table이 생성된다. table의 이름은 through 속성에 담긴 value로 결정된다.
 
-8. Sequelize에서 관계 정의할 때 as는 무엇일까?
+### Sequelize에서 관계 정의할 때 as는 무엇일까?
 
 Sequelize에서 `as`는 관계 정의 시에 사용되는 옵션 중 하나입니다. 이 옵션은 모델 간의 관계를 정의하거나 쿼리할 때 사용되는 별칭(alias)을 설정하는 역할을 합니다. `as` 옵션을 사용하여 관계에 대한 별칭을 지정하면, 해당 별칭을 통해 쿼리를 작성하거나 관계를 사용할 수 있습니다.
 
