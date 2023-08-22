@@ -10,7 +10,7 @@
 - [x] multer로 사진 업로드 구현
 - [x] hashtag로 검색 기능 추가
 - [x] follow 기능 추가
-- [ ] following 끊기 기능 추가
+- [x] following 끊기 기능 추가
 - [ ] 프로필 정보 변경 기능 추가
 - [ ] 게시글 좋아요 및 취소 추가.
 - [ ] 게시글 삭제하기 추가.
@@ -410,3 +410,58 @@ app.use((req, res, next) => {
 위 예시에서 `currentUser.username`은 `res.locals`에 저장된 데이터를 템플릿에서 사용하는 방법을 보여줍니다. 이와 유사하게, `res.locals`에 저장된 다른 데이터도 템플릿에서 활용할 수 있습니다.
 
 ## include는 join 연산인데, 생각하기 좀 복잡하다. 정리해서 지금은 이해했는데, 계속 복습해야 한다. deserializeUser 부분.
+
+
+## sequelize 관계를 제거하는 방법.
+
+**1. destroy 메서드 사용:**
+
+관계가 다음과 같을 때,
+```javascript
+db.User.belongsToMany(db.User, {
+        foreignKey: "followingId",
+        as: "Followers",
+        through: "Follow",
+    });
+db.User.belongsToMany(db.User, {
+    foreignKey: "followerId",
+    as: "Followings",
+    through: "Follow",
+});
+```
+
+```javascript
+const A = await db.User.findByPk(aId); // A의 정보 가져오기
+const B = await db.User.findByPk(bId); // B의 정보 가져오기
+
+// A가 B를 언팔로우하기
+await db.Follow.destroy({
+  where: {
+    followerId: A.id,
+    followingId: B.id
+  }
+});
+
+// B가 A를 언팔로우하기
+await db.Follow.destroy({
+  where: {
+    followerId: B.id,
+    followingId: A.id
+  }
+});
+```
+
+**2. removeFollowings 및 removeFollowers 메서드 사용:**
+
+```javascript
+const A = await db.User.findByPk(aId); // A의 정보 가져오기
+const B = await db.User.findByPk(bId); // B의 정보 가져오기
+
+// A가 B를 언팔로우하기
+await A.removeFollowings(B);
+
+// B가 A를 언팔로우하기
+await B.removeFollowers(A);
+```
+
+두 가지 방법 모두 팔로우 관계를 해제하기 위한 방법입니다. 첫 번째 방법은 직접 `sequelize`의 `destroy` 메서드를 사용하여 연결 테이블의 특정 행을 삭제하는 것이고, 두 번째 방법은 모델 인스턴스의 메서드인 `removeFollowings`와 `removeFollowers`를 사용하여 관련된 행을 삭제하는 방법입니다. 선택하신 방법으로 팔로우 관계를 해제하시면 됩니다.
