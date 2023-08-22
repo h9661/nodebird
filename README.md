@@ -4,21 +4,24 @@
 ## 체크포인트
 - [x] 프로젝트 초기 새팅하기
 - [x] 데이터베이스 설정 완료
-- [ ] 각 nunjunks 파일들과 script 이해하기
-- [ ] model의 관계들과 설정법 이해하기
+- [x] 각 nunjunks 파일들과 script 이해하기
+- [x] model의 관계들과 설정법 이해하기
+- [x] login 기능 구현
+- [ ] multer로 사진 업로드 구현
+
 
 ## 학습 정리
-### dotenv
+## dotenv
 
 https://www.daleseo.com/js-dotenv/
 
-### morgan
+## morgan
 
 node js 로그 관리 라이브러리이다. 자세하게 알 필요는 없을 것 같다. 진행하면서 배우자.
 
-### .env 파일에 환경 변수를 집어넣으면, dotenv 라이브러리가 읽어서 process.env에 넣어준다.
+## .env 파일에 환경 변수를 집어넣으면, dotenv 라이브러리가 읽어서 process.env에 넣어준다.
 
-### res.locals는 뭘까?
+## res.locals는 뭘까?
 
 `res.locals`는 Express.js에서 사용되는 객체입니다. 이 객체는 미들웨어에서 다음 미들웨어나 라우터 핸들러로 데이터를 전달하는 데 사용됩니다. `res.locals`에 저장된 데이터는 해당 요청에 대한 라이프사이클 동안 유지되며, 이를 통해 데이터 공유와 전달이 용이해집니다.
 
@@ -37,7 +40,7 @@ app.get('/', function(req, res) {
 ```
 위의 코드 예시에서 `res.locals.currentUser`는 모든 라우터 핸들러에서 접근 가능한 데이터로 사용될 수 있습니다. 이를 통해 중복된 코드를 피하고 요청 처리 과정에서 데이터를 효율적으로 전달할 수 있습니다.
 
-###
+##
 ```
 {% block <name>}
 {% endblock %}
@@ -82,9 +85,9 @@ Nunjucks에서 블록은 `템플릿 상속과 확장`을 위해 사용됩니다.
 ```
 이 예시에서 `base.njk`는 레이아웃을 정의하고, `page.njk`은 `base.njk`을 확장하여 페이지의 콘텐츠를 채우고 있습니다. Nunjucks의 block과 extends 문법을 사용하여 템플릿을 구성하고 확장할 수 있습니다.
 
-### `location.reload()` 현재 page를 새로고침한다. 매개변수의 값을 true로 넣으면 브라우저의 캐시를 무시하고 새로고침을 수행한다.
+## `location.reload()` 현재 page를 새로고침한다. 매개변수의 값을 true로 넣으면 브라우저의 캐시를 무시하고 새로고침을 수행한다.
 
-### Sequelize에서 관계를 표현하는 방법
+## Sequelize에서 관계를 표현하는 방법
 
 1. **1:N (One-to-Many) 관계 예시**:
    1명의 작성자(User)가 여러 개의 게시물(Post)을 작성하는 관계입니다.
@@ -189,7 +192,7 @@ sequelize.sync({ force: true }).then(async () => {
 
 두 table 사이의 관계가 id 값으로 나타난 table이 생성된다. table의 이름은 through 속성에 담긴 value로 결정된다.
 
-### Sequelize에서 관계 정의할 때 as는 무엇일까?
+## Sequelize에서 관계 정의할 때 as는 무엇일까?
 
 Sequelize에서 `as`는 관계 정의 시에 사용되는 옵션 중 하나입니다. 이 옵션은 모델 간의 관계를 정의하거나 쿼리할 때 사용되는 별칭(alias)을 설정하는 역할을 합니다. `as` 옵션을 사용하여 관계에 대한 별칭을 지정하면, 해당 별칭을 통해 쿼리를 작성하거나 관계를 사용할 수 있습니다.
 
@@ -221,4 +224,59 @@ Sequelize에서 `as`는 관계 정의 시에 사용되는 옵션 중 하나입�
    위의 코드에서 `as: "Followers"`를 사용하여 "Followers" 관계를 포함하여 `User` 모델을 조회하고 있습니다.
 
 이처럼 `as` 옵션은 관계를 다루는 과정에서 읽기 쉬운 코드를 작성하고 별칭을 활용하여 관계를 구분하는 데 도움을 줍니다.
+
+
+## sequelize migration
+
+`sequelize`를 사용하여 migration을 통해 데이터베이스 테이블의 컬럼을 수정하는 과정은 아래와 같습니다. 아래 예시에서는 `email` 컬럼의 길이를 늘리는 작업을 가정하겠습니다.
+
+1. **마이그레이션 파일 생성:** Sequelize는 마이그레이션 파일을 사용하여 데이터베이스 스키마의 변경 사항을 관리합니다. 아래와 같이 명령어를 통해 마이그레이션 파일을 생성합니다.
+
+```bash
+npx sequelize-cli migration:generate --name modify-email-column
+```
+
+위 명령어를 실행하면 `sequelize` 명령행 도구를 통해 새 마이그레이션 파일이 생성됩니다.
+
+2. **마이그레이션 파일 수정:** 생성된 마이그레이션 파일을 열고, `up` 메서드와 `down` 메서드를 수정하여 변경 사항을 정의합니다.
+
+```javascript
+'use strict';
+
+module.exports = {
+  up: async (queryInterface, Sequelize) => {
+    // Modify the column
+    await queryInterface.changeColumn('Users', 'email', {
+      type: Sequelize.STRING(255), // New length
+      allowNull: false,
+    });
+  },
+
+  down: async (queryInterface, Sequelize) => {
+    // Revert the changes
+    await queryInterface.changeColumn('Users', 'email', {
+      type: Sequelize.STRING,
+      allowNull: false,
+    });
+  }
+};
+```
+
+3. **마이그레이션 실행:** 아래 명령어를 사용하여 마이그레이션을 실행합니다.
+
+```bash
+npx sequelize-cli db:migrate
+```
+
+위 명령어를 실행하면 마이그레이션 파일의 `up` 메서드에 정의된 변경 사항이 데이터베이스에 적용됩니다.
+
+4. **롤백 (Downgrade):** 변경 사항을 롤백하고 이전 상태로 돌리려면 아래 명령어를 사용합니다.
+
+```bash
+npx sequelize-cli db:migrate:undo
+```
+
+위 명령어를 실행하면 마이그레이션 파일의 `down` 메서드에 정의된 변경 사항이 적용되어 변경 내용이 롤백됩니다.
+
+위 과정을 통해 `sequelize`를 사용하여 migration을 이용해 데이터베이스 테이블의 컬럼을 수정할 수 있습니다. 실제로는 데이터베이스 종류에 따라 다른 dialect를 사용하고, 변경 사항을 조정할 수 있을 것입니다.
 
