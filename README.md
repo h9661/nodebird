@@ -280,3 +280,101 @@ npx sequelize-cli db:migrate:undo
 
 위 과정을 통해 `sequelize`를 사용하여 migration을 이용해 데이터베이스 테이블의 컬럼을 수정할 수 있습니다. 실제로는 데이터베이스 종류에 따라 다른 dialect를 사용하고, 변경 사항을 조정할 수 있을 것입니다.
 
+## sequelize 관계 추가하는 법
+
+
+1. **모델 정의와 관계 설정:** 이미 `User`와 `Project` 모델이 정의되어 있고 관계 설정이 필요한 경우, 아래와 같이 관계를 설정합니다.
+
+```javascript
+const { Sequelize, DataTypes } = require('sequelize');
+
+const sequelize = new Sequelize('database', 'username', 'password', {
+  host: 'localhost',
+  dialect: 'mysql',
+});
+
+const User = sequelize.define('User', {
+  username: {
+    type: DataTypes.STRING,
+    allowNull: false,
+  },
+});
+
+const Project = sequelize.define('Project', {
+  projectName: {
+    type: DataTypes.STRING,
+    allowNull: false,
+  },
+});
+
+// N:M 관계 설정
+User.belongsToMany(Project, { through: 'UserProject' });
+Project.belongsToMany(User, { through: 'UserProject' });
+```
+
+2. **데이터 추가:** 이미 모델과 관계가 설정된 경우, 데이터를 추가할 때 `addProject()`와 같은 메서드를 사용하여 N:M 관계를 이용할 수 있습니다.
+
+```javascript
+(async () => {
+  try {
+    const user = await User.create({ username: 'John' });
+    const project = await Project.create({ projectName: 'Project A' });
+
+    // N:M 관계를 이용하여 데이터 추가
+    await user.addProject(project);
+
+    console.log('Data added successfully.');
+  } catch (error) {
+    console.error('Error adding data:', error);
+  } finally {
+    await sequelize.close();
+  }
+})();
+```
+
+## 관계에서 어떤 table과 연관된 정보를 함께 가져오려면 어떻게 해야할까? include를 사용하면 된다.
+
+```javascript
+const posts = await Post.findAll({
+      include: {
+        model: User,
+        attributes: ['id', 'nick'],
+      },
+      order: [['createdAt', 'DESC']],
+    });
+```
+
+## table 검색과 관계 검색에서 `include` 옵션의 값이 배열인지 아닌지 차이가 있었다. 왜 그렇지? 1:N 관계, N:M 관계라는 차이가 있어서 그렇더라.
+
+`include` 옵션의 값이 하나는 배열 형태로 되어 있고 다른 하나는 배열 형태로 되어 있지 않은 이유에는 Sequelize에서 관계를 다루는 방식과 관련이 있습니다. 이 두 코드 조각은 서로 다른 관계 형태를 다루고 있기 때문에 `include` 옵션의 구조가 조금 다를 수 있습니다.
+
+1. 첫 번째 코드 조각:
+
+```javascript
+const posts = await Post.findAll({
+    include: {
+        model: User,
+        attributes: ["id", "nick"],
+    },
+    order: [["createdAt", "DESC"]],
+});
+```
+
+이 코드는 `Post` 모델의 게시물을 조회할 때, 관련된 `User` 모델을 포함시키는 작업을 수행합니다. 관계가 1:N (한 사용자가 여러 게시물을 가질 수 있음) 또는 N:M (여러 사용자가 여러 게시물에 관여할 수 있음)인 경우, 단일 객체나 배열로 표현됩니다. 따라서 `include` 옵션에는 단일 객체로 표현됩니다. `User` 모델을 포함하여 가져오고, `attributes` 속성을 사용하여 사용자의 'id'와 'nick' 속성을 선택적으로 가져옵니다.
+
+2. 두 번째 코드 조각:
+
+```javascript
+posts = await hashtag.getPosts({
+    include: [
+        {
+            model: User,
+        },
+    ],
+    order: [["createdAt", "DESC"]],
+});
+```
+
+이 코드는 `hashtag` 모델의 게시물을 조회할 때, 관련된 `User` 모델을 포함시키는 작업을 수행합니다. 여기서 `getPosts` 메서드는 해당 `hashtag` 모델의 관계를 가져오는 커스텀 메서드로서, Sequelize에서 관계 모델을 가져올 때 배열 형태로 정의됩니다. 이 메서드를 사용하여 특정 hashtag와 관련된 게시물을 가져오고, `User` 모델을 포함하여 가져옵니다.
+
+결론적으로, `include` 옵션의 값이 배열인지 아닌지는 Sequelize의 관계 형태와 사용되는 메서드에 따라 다르게 결정됩니다.
