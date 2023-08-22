@@ -9,7 +9,11 @@
 - [x] login 기능 구현
 - [x] multer로 사진 업로드 구현
 - [x] hashtag로 검색 기능 추가
-- [ ] follow 기능 추가
+- [x] follow 기능 추가
+- [ ] following 끊기 기능 추가
+- [ ] 프로필 정보 변경 기능 추가
+- [ ] 게시글 좋아요 및 취소 추가.
+- [ ] 게시글 삭제하기 추가.
 
 ## 학습 정리
 ## dotenv
@@ -344,6 +348,7 @@ const posts = await Post.findAll({
       order: [['createdAt', 'DESC']],
     });
 ```
+이렇게 include로 join하면, Post 객체에 User 객체가 담겨서 리턴된다.
 
 ## table 검색과 관계 검색에서 `include` 옵션의 값이 배열인지 아닌지 차이가 있었다. 왜 그렇지? 1:N 관계, N:M 관계라는 차이가 있어서 그렇더라.
 
@@ -404,5 +409,4 @@ app.use((req, res, next) => {
 
 위 예시에서 `currentUser.username`은 `res.locals`에 저장된 데이터를 템플릿에서 사용하는 방법을 보여줍니다. 이와 유사하게, `res.locals`에 저장된 다른 데이터도 템플릿에서 활용할 수 있습니다.
 
-## passport serializeUser에서 req.session에 user id를 넣어주고, deserializeUser에서 session에서 user id로 users table에서 찾아 req.user 변수에 그 user 객체를 넣어준다. 따라서 그 변수 req.user는 db 모든 column 및 관계에 대해서 참조 가능하다.
-
+## include는 join 연산인데, 생각하기 좀 복잡하다. 정리해서 지금은 이해했는데, 계속 복습해야 한다. deserializeUser 부분.
