@@ -379,3 +379,30 @@ posts = await hashtag.getPosts({
 이 코드는 `hashtag` 모델의 게시물을 조회할 때, 관련된 `User` 모델을 포함시키는 작업을 수행합니다. 여기서 `getPosts` 메서드는 해당 `hashtag` 모델의 관계를 가져오는 커스텀 메서드로서, Sequelize에서 관계 모델을 가져올 때 배열 형태로 정의됩니다. 이 메서드를 사용하여 특정 hashtag와 관련된 게시물을 가져오고, `User` 모델을 포함하여 가져옵니다.
 
 결론적으로, `include` 옵션의 값이 배열인지 아닌지는 Sequelize의 관계 형태와 사용되는 메서드에 따라 다르게 결정됩니다.
+
+## res.locals의 정보들은 자동으로 res.render으로 뷰를 렌더링할 때 자동으로 포함된다.
+
+네, 맞습니다. `res.locals` 객체에 저장된 정보는 Express.js에서 `res.render()` 메서드를 사용하여 뷰(템플릿)를 렌더링할 때 자동으로 포함됩니다. 이를 통해 뷰 템플릿에서 해당 정보에 접근하고 활용할 수 있습니다.
+
+`res.locals` 객체는 미들웨어나 라우터에서 설정된 로컬 변수들을 담고 있는 객체입니다. 이 객체에 저장된 데이터는 해당 요청의 수명 주기 동안 유효하며, 같은 요청 내에서 다양한 미들웨어 및 라우터에서 공유되는 데이터를 저장하는 데 사용됩니다.
+
+예를 들어, 다음과 같이 `res.locals`에 데이터를 설정하면, 해당 데이터는 템플릿에서 접근 가능합니다:
+
+```javascript
+app.use((req, res, next) => {
+  res.locals.currentUser = req.user; // 현재 로그인한 사용자 정보를 저장
+  next();
+});
+```
+
+위 코드에서 `res.locals.currentUser`에 `req.user` 데이터를 저장한 후, `res.render()` 메서드를 호출하여 템플릿을 렌더링하면, 해당 템플릿에서 `currentUser` 변수에 접근하여 현재 로그인한 사용자 정보를 활용할 수 있습니다.
+
+```javascript
+// 템플릿 엔진을 사용하는 예시 (예: EJS)
+<h1>Welcome, <%= currentUser.username %></h1>
+```
+
+위 예시에서 `currentUser.username`은 `res.locals`에 저장된 데이터를 템플릿에서 사용하는 방법을 보여줍니다. 이와 유사하게, `res.locals`에 저장된 다른 데이터도 템플릿에서 활용할 수 있습니다.
+
+## passport serializeUser에서 req.session에 user id를 넣어주고, deserializeUser에서 session에서 user id로 users table에서 찾아 req.user 변수에 그 user 객체를 넣어준다. 따라서 그 변수 req.user는 db 모든 column 및 관계에 대해서 참조 가능하다.
+
