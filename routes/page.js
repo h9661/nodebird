@@ -1,5 +1,10 @@
 const express = require("express");
-const { renderProfile, renderJoin, renderMain } = require("../controllers/page");
+const {
+    renderProfile,
+    renderJoin,
+    renderMain,
+    renderHashtag,
+} = require("../controllers/page");
 
 const router = express.Router();
 
@@ -14,5 +19,6 @@ router.use((req, res, next) => {
 router.get("/profile", renderProfile);
 router.get("/join", renderJoin);
 router.get("/", renderMain);
+router.get("/hashtag", renderHashtag);
 
 module.exports = router;
