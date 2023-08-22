@@ -6,7 +6,11 @@
       <h2>팔로잉 목록</h2>
       {% if user.Followings %}
         {% for following in user.Followings %}
-          <div>{{following.nick}}</div>
+          <div class="following">
+            <div>{{following.nick}}</div>
+            <input type="hidden" class="following-id" value="{{following.id}}">
+            <button class="unfollow">언팔로우</button>
+          </div>
         {% endfor %}
       {% endif %}
     </div>
@@ -19,4 +23,27 @@
       {% endif %}
     </div>
   </div>
+{% endblock %}
+
+{% block script %}
+  <script>
+    document.querySelectorAll(".unfollow").forEach(function (tag){
+      tag.addEventListener('click', function() {
+        const myId = document.querySelector("#my-id").value;
+        if(myId){
+          const userId = tag.parentNode.querySelector(".following-id").value;
+          console.log(myId, userId);
+          if(confirm("언팔로우하시겠습니까?")){
+            axios.post(`/user/${userId}/unfollow`)
+              .then(() => {
+                location.reload();
+              })
+              .catch((err) => {
+                console.error(err);
+              })
+          }
+        }
+      })
+    })
+  </script>
 {% endblock %}
