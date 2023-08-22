@@ -7,8 +7,9 @@
 - [x] 각 nunjunks 파일들과 script 이해하기
 - [x] model의 관계들과 설정법 이해하기
 - [x] login 기능 구현
-- [ ] multer로 사진 업로드 구현
-
+- [x] multer로 사진 업로드 구현
+- [x] hashtag로 검색 기능 추가
+- [ ] follow 기능 추가
 
 ## 학습 정리
 ## dotenv
