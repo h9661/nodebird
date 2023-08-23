@@ -16,12 +16,23 @@ function renderChange(req, res) {
 
 async function renderMain(req, res, next) {
     const posts = await Post.findAll({
-        include: {
-            model: User,
-            attributes: ["id", "nick"],
-        },
+        include: [
+            {
+                model: User,
+                attributes: ["id", "nick"],
+            },
+            {
+                model: User,
+                attributes: ["id", "nick"],
+                as: "LikingUsers",
+            },
+        ],
         order: [["createdAt", "DESC"]],
     });
+
+    for(let post of posts){
+        post.LikingUsersId = post.LikingUsers?.map((u) => u.id) || [];
+    }
 
     res.render("main", {
         title: "NodeBird",
