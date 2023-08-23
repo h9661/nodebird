@@ -2,6 +2,7 @@ const passport = require("passport");
 const local = require("./localStrategy.js");
 const google = require("./googleStrategy.js");
 const User = require("../models/user");
+const Post = require("../models/post.js");
 
 module.exports = () => {
     passport.serializeUser((user, done) => {
@@ -22,6 +23,10 @@ module.exports = () => {
                     model: User,
                     attributes: ["id", "nick"],
                     as: "Followings",
+                },
+                {
+                    model: Post,
+                    as: "LikedPosts",
                 },
             ],
         })
