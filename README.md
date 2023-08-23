@@ -11,7 +11,7 @@
 - [x] hashtag로 검색 기능 추가
 - [x] follow 기능 추가
 - [x] following 끊기 기능 추가
-- [ ] 프로필 정보 변경 기능 추가
+- [x] 프로필 정보 변경 기능 추가
 - [ ] 게시글 좋아요 및 취소 추가.
 - [ ] 게시글 삭제하기 추가.
 
@@ -463,3 +463,45 @@ await B.removeFollowers(A);
 ```
 
 두 가지 방법 모두 팔로우 관계를 해제하기 위한 방법입니다. 첫 번째 방법은 직접 `sequelize`의 `destroy` 메서드를 사용하여 연결 테이블의 특정 행을 삭제하는 것이고, 두 번째 방법은 모델 인스턴스의 메서드인 `removeFollowings`와 `removeFollowers`를 사용하여 관련된 행을 삭제하는 방법입니다. 선택하신 방법으로 팔로우 관계를 해제하시면 됩니다.
+
+## sequelize에서 record update 하기
+`sequelize`를 사용하여 특정 테이블의 레코드를 수정하는 방법은 다음과 같습니다. 아래 예시에서는 사용자 정보를 수정하는 과정을 설명하겠습니다.
+
+1. **레코드 가져오기:** 먼저 수정하려는 레코드를 데이터베이스에서 가져옵니다. 이를 위해 해당 테이블의 모델을 사용하여 적절한 메서드를 호출합니다. 일반적으로는 `findByPk` 메서드를 사용하여 레코드를 찾을 수 있습니다.
+
+2. **레코드 수정:** 가져온 레코드를 수정하고자 하는 방식에 따라 해당 필드를 변경합니다.
+
+3. **저장:** 수정한 정보를 데이터베이스에 저장합니다.
+
+여기서는 이 과정을 `sequelize`를 사용하여 사용자 정보를 업데이트하는 예시로 설명하겠습니다.
+
+```javascript
+const db = require('./models'); // 모델을 정의한 파일 경로로 변경해야 합니다.
+
+// 수정할 사용자의 ID
+const userId = 1;
+
+// 수정할 정보
+const updatedUserInfo = {
+  username: 'newUsername',
+  email: 'newemail@example.com',
+};
+
+// 레코드 가져오기
+const user = await db.User.findByPk(userId);
+
+if (user) {
+  // 레코드 수정
+  user.username = updatedUserInfo.username;
+  user.email = updatedUserInfo.email;
+
+  // 수정된 정보 저장
+  await user.save();
+} else {
+  console.log('사용자를 찾을 수 없습니다.');
+}
+```
+
+위 코드에서 `db.User`는 사용자 모델을 나타냅니다. 실제 코드에서는 해당 모델을 정의한 파일의 경로를 제공해야 합니다.
+
+레코드를 수정하는 방법은 해당 모델의 필드를 변경한 후 `save` 메서드를 호출하여 수정 내용을 데이터베이스에 반영하는 것입니다. 이를 통해 특정 테이블의 레코드를 수정할 수 있습니다.
