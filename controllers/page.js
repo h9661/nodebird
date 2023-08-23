@@ -11,7 +11,7 @@ async function renderProfile(req, res) {
         },
     });
 
-    res.render("profile", { title: "내 정보 - NodeBird", "twits": twits || [] });
+    res.render("profile", { title: "내 정보 - NodeBird", twits: twits || [] });
 }
 
 function renderJoin(req, res) {
@@ -66,9 +66,17 @@ async function renderHashtag(req, res, next) {
                     {
                         model: User,
                     },
+                    {
+                        model: User,
+                        as: "LikingUsers",
+                    },
                 ],
                 order: [["createdAt", "DESC"]],
             });
+        }
+
+        for (let post of posts) {
+            post.LikingUsersId = post.LikingUsers?.map((u) => u.id) || [];
         }
 
         return res.render("main", {
