@@ -43,3 +43,27 @@ exports.deletePost = async (req, res, next) => {
         next(err);
     }
 };
+
+exports.likePost = async (req, res, next) => {
+    try {
+        const post = await Post.findByPk(req.params.postId);
+
+        await post.addLikingUser(req.body.myId);
+        res.send("success");
+    } catch (err) {
+        console.error(err);
+        next(err);
+    }
+};
+
+exports.unlikePost = async (req, res, next) => {
+    try {
+        const post = await Post.findByPk(req.params.postId);
+
+        await post.removeLikingUsers(req.body.myId);
+        res.send("success");
+    } catch (err) {
+        console.error(err);
+        next(err);
+    }
+};
