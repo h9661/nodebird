@@ -36,7 +36,7 @@ exports.change = async (req, res, next) => {
         const { id, nick, password } = req.body;
         const user = await User.findByPk(id);
         user.nick = nick;
-        user.password = await bcryptjs.hash(password, 12);
+        if (password) user.password = await bcryptjs.hash(password, 12);
         await user.save();
 
         return res.redirect("/");

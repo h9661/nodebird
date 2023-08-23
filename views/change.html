@@ -8,8 +8,10 @@
         <label for="change-nick">닉네임</label>
         <input id="change-nick" type="text" name="nick" value="{{user.nick}}"></div>
       <div class="input-group">
+        {% if user.provider == "local" %}
         <label for="change-password">비밀번호</label>
         <input id="change-password" type="password" name="password" value="{{user.passowrd}}">
+        {% endif %}
       </div>
       <button id="change-btn" type="submit" class="btn">정보 변경</button>
     </form>
