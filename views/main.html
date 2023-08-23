@@ -35,6 +35,12 @@
             {% if twit.User.id === user.id %}
             <button class="twit-delete">삭제하기</button>
             {% endif %}
+            {% if not twit.LikingUsersId.includes(user.id) %}
+            <button class="twit-like">좋아요</button>
+            {% endif %}
+            {% if twit.LikingUsersId.includes(user.id) %}
+            <button class="twit-unlike">좋아요 취소</button>
+            {% endif %}
             <div class="twit-content">{{twit.content}}</div>
             {% if twit.img %}
             <div class="twit-img"><img src="{{twit.img}}" alt="섬네일"></div>
@@ -92,6 +98,42 @@
                 const postId = tag.parentNode.querySelector('.twit-id').value;
                 if(confirm('삭제하시겠습니까?')){
                     axios.post(`/post/${postId}/delete`)
+                    .then(() => {
+                        location.reload();
+                    })
+                    .catch((err) => {
+                        console.error(err);
+                    })
+                }
+            }
+        })
+    })
+
+    document.querySelectorAll('.twit-like').forEach(function (tag) {
+        tag.addEventListener('click', function () {
+            const myId = document.querySelector('#my-id').value;
+            if(myId){
+                const postId = tag.parentNode.querySelector('.twit-id').value;
+                if(confirm('좋아요를 누르겠습니까?')){
+                    axios.post(`/post/${postId}/like`, { "myId": myId })
+                    .then(() => {
+                        location.reload();
+                    })
+                    .catch((err) => {
+                        console.error(err);
+                    })
+                }
+            }
+        })
+    })
+
+    document.querySelectorAll('.twit-unlike').forEach(function (tag) {
+        tag.addEventListener('click', function () {
+            const myId = document.querySelector('#my-id').value;
+            if(myId){
+                const postId = tag.parentNode.querySelector('.twit-id').value;
+                if(confirm('좋아요를 취소하겠습니까?')){
+                    axios.post(`/post/${postId}/unlike`, { "myId": myId })
                     .then(() => {
                         location.reload();
                     })

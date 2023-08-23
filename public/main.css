@@ -92,6 +92,8 @@ input[type='text'], input[type='email'], input[type='password'], textarea {
 .twit-author { display: inline-block; font-weight: bold; margin-right: 10px; }
 
 .twit-follow,
+.twit-like,
+.twit-unlike,
 .twit-delete {
   padding: 1px 5px;
   background: #fff;
