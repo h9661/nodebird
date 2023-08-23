@@ -60,7 +60,7 @@ exports.unlikePost = async (req, res, next) => {
     try {
         const post = await Post.findByPk(req.params.postId);
 
-        await post.removeLikingUsers(req.body.myId);
+        await post.removeLikingUser(req.body.myId);
         res.send("success");
     } catch (err) {
         console.error(err);
