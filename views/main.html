@@ -41,6 +41,10 @@
             {% if twit.LikingUsersId.includes(user.id) %}
             <button class="twit-unlike">좋아요 취소</button>
             {% endif %}
+            <div class="likes-container">
+                <label class="likes-label" for="likes-count">좋아요</label>
+                <input type="number" value="{{twit.LikingUsersId.length}}" class="likes-count" readonly>
+            </div>
             <div class="twit-content">{{twit.content}}</div>
             {% if twit.img %}
             <div class="twit-img"><img src="{{twit.img}}" alt="섬네일"></div>
