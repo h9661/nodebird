@@ -10,6 +10,10 @@ function renderJoin(req, res) {
     res.render("join", { title: "회원가입 - NodeBird" });
 }
 
+function renderChange(req, res) {
+    res.render("change", { title: "정보 변경 - NodeBird" });
+}
+
 async function renderMain(req, res, next) {
     const posts = await Post.findAll({
         include: {
@@ -63,4 +67,5 @@ module.exports = {
     renderJoin,
     renderMain,
     renderHashtag,
+    renderChange,
 };
