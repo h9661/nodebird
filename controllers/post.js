@@ -31,3 +31,15 @@ exports.uploadPost = async (req, res, next) => {
         next(error);
     }
 };
+
+exports.deletePost = async (req, res, next) => {
+    try {
+        const post = await Post.findByPk(req.params.postId);
+
+        await post.destroy();
+        res.send("success");
+    } catch (err) {
+        console.error(err);
+        next(err);
+    }
+};
