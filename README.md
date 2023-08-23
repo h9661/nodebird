@@ -413,9 +413,6 @@ app.use((req, res, next) => {
 
 
 ## sequelize 관계를 제거하는 방법.
-
-**1. destroy 메서드 사용:**
-
 관계가 다음과 같을 때,
 ```javascript
 db.User.belongsToMany(db.User, {
@@ -430,6 +427,7 @@ db.User.belongsToMany(db.User, {
 });
 ```
 
+**1. destroy 메서드 사용:**
 ```javascript
 const A = await db.User.findByPk(aId); // A의 정보 가져오기
 const B = await db.User.findByPk(bId); // B의 정보 가져오기
