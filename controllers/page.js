@@ -2,8 +2,16 @@ const Post = require("../models/post");
 const User = require("../models/user");
 const Hashtag = require("../models/hashtag");
 
-function renderProfile(req, res) {
-    res.render("profile", { title: "내 정보 - NodeBird" });
+async function renderProfile(req, res) {
+    let twits = await Post.findAll({
+        where: { id: req.user?.LikedPosts.map((p) => p.id) || [] },
+        include: {
+            model: User,
+            attributes: ["id", "nick"],
+        },
+    });
+
+    res.render("profile", { title: "내 정보 - NodeBird", "twits": twits || [] });
 }
 
 function renderJoin(req, res) {
@@ -30,7 +38,7 @@ async function renderMain(req, res, next) {
         order: [["createdAt", "DESC"]],
     });
 
-    for(let post of posts){
+    for (let post of posts) {
         post.LikingUsersId = post.LikingUsers?.map((u) => u.id) || [];
     }
 
