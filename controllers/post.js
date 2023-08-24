@@ -83,9 +83,9 @@ exports.addComment = async (req, res, next) => {
         console.log(postId, userId, content);
 
         const comment = await Comment.create({
-            content: content,
-            CommentingUserId: userId,
-            CommentedPostId: postId,
+            postId,
+            userId,
+            content,
         });
 
         res.send("success");
