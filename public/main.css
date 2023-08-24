@@ -62,8 +62,11 @@ input[type='text'], input[type='email'], input[type='password'], textarea {
   background: lightcoral;
   overflow: hidden;
 }
-#img-preview { max-width: 100%; }
-#img-label {
+
+#img-preview, #video-preview { max-width: 100%; }
+
+#img-label,
+#video-label {
   float: left;
   cursor: pointer;
   border-radius: 4px;
@@ -74,7 +77,7 @@ input[type='text'], input[type='email'], input[type='password'], textarea {
   height: 37px;
   line-height: 37px;
 }
-#img { display: none; }
+#img, #video { display: none; }
 #twit { width: 100%; min-height: 72px; }
 #twit-btn {
   float: right;

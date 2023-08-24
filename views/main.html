@@ -10,11 +10,18 @@
             </div>
             <div class="img-preview">
                 <img id="img-preview" src="" style="display: none;" width="250" alt="미리보기">
-                <input id="img-url" type="hidden" name="url">
+                <input id="img-url" type="hidden" name="imgUrl">
+            </div>
+            <div class="video-preview">
+                <video id="video-preview" src="" style="display: none;" width="250" controls></video>
+                <input id="video-preview" type="hidden" name="url">
+                <input id="video-url" type="hidden" name="videoUrl">
             </div>
             <div>
                 <label id="img-label" for="img">사진 업로드</label>
                 <input id="img" type="file" accept="image/*">
+                <label id="video-label" for="video">비디오 업로드</label>
+                <input id="video" type="file" accept="video/*">
                 <button id="twit-btn" type="submit" class="btn">짹짹</button>
             </div>
         </form>
@@ -48,6 +55,9 @@
             <div class="twit-content">{{twit.content}}</div>
             {% if twit.img %}
             <div class="twit-img"><img src="{{twit.img}}" alt="섬네일"></div>
+            {% endif %}
+            {% if twit.video %}
+            <div class="twit-video"><video src="{{twit.video}}" controls></video></div>
             {% endif %}
             <hr>
             {% for comment in twit.Comments %}
@@ -84,6 +94,23 @@
                     console.error(err);
                 });
         });
+    }
+
+    if (document.getElementById('video')){
+        document.getElementById('video').addEventListener('change', function(e) {
+            const formData = new FormData();
+            console.log(this, this.files);
+            formData.append('video', this.files[0]);
+            axios.post('/post/video', formData)
+                .then((res) => {
+                    document.getElementById('video-url').value = res.data.url;
+                    document.getElementById('video-preview').src = res.data.url;
+                    document.getElementById('video-preview').style.display = 'inline';
+                })
+                .catch((err) => {
+                    console.error(err);
+                })
+        })
     }
     
     document.querySelectorAll('.twit-follow').forEach(function (tag) {
