@@ -12,6 +12,10 @@ class Post extends Sequelize.Model {
                     type: Sequelize.STRING(200),
                     allowNull: true,
                 },
+                video: {
+                    type: Sequelize.STRING(200),
+                    allowNull: true,
+                },
             },
             {
                 sequelize,
