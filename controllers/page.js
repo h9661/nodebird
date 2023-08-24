@@ -1,6 +1,7 @@
 const Post = require("../models/post");
 const User = require("../models/user");
 const Hashtag = require("../models/hashtag");
+const Comment = require("../models/comment");
 
 async function renderProfile(req, res) {
     let twits = await Post.findAll({
@@ -38,13 +39,25 @@ async function renderMain(req, res, next) {
         order: [["createdAt", "DESC"]],
     });
 
-    for (let post of posts) {
-        post.LikingUsersId = post.LikingUsers?.map((u) => u.id) || [];
-    }
+    const result = await Promise.all(
+        posts.map(async (post) => {
+            post.LikingUsersId = post.LikingUsers?.map((u) => u.id) || [];
+            post.Comments = await Comment.findAll({
+                where: { postId: post.id },
+                include: {
+                    model: User,
+                    attributes: ["id", "nick"],
+                    as: "CommentingUser",
+                },
+            });
+
+            return post;
+        })
+    );
 
     res.render("main", {
         title: "NodeBird",
-        twits: posts,
+        twits: result,
     });
 }
 
