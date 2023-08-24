@@ -754,3 +754,24 @@ const result = await Promise.all(
 이거 하다가 배운건데 as 키워드가 사용되면, 항상 as 키워드로 가져와야 한다.
 
 ## 비디오도 multer로 이미지처럼 똑같이 처리할 수 있다.
+
+## [MySql] errno: 121 "Duplicate key on write or update"
+
+https://stackoverflow.com/questions/20512572/duplicate-key-on-write-or-update
+
+-> 해당 스키마에 똑같은 이름의 제약조건이 있는것. 
+
+ex )
+t_word 테이블에 외래키 제약 명을 fk_t_note 로 해놓고 
+
+t_language 테이블에 외래키 제약 명을 또 fk_t_note 로 해놓았고, 
+
+t_word가 먼저 create 되었다면 
+
+t_language create 시에 해당 에러가 발생.. 
+
+ 
+
+ 
+
+외래키 제약명은 fk_본테이블명_참조키테이블명_참조키 으로 바꿈 
