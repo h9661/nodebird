@@ -8,6 +8,7 @@ const {
     deletePost,
     likePost,
     unlikePost,
+    addComment,
 } = require("../controllers/post");
 const router = express.Router();
 
@@ -27,5 +28,7 @@ router.post("/:postId/delete", isLoggedIn, deletePost);
 router.post("/:postId/like", isLoggedIn, likePost);
 
 router.post("/:postId/unlike", isLoggedIn, unlikePost);
+
+router.post("/:postId/comment", isLoggedIn, addComment);
 
 module.exports = router;
