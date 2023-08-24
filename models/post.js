@@ -41,6 +41,7 @@ class Post extends Sequelize.Model {
         });
         db.Post.belongsToMany(db.User, {
             through: 'Comments',
+            unique: false,
             foreignKey: 'CommentedPostId',
             otherKey: 'CommentingUserId',
             as: 'CommentedUsers' 
