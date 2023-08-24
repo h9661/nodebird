@@ -1,4 +1,6 @@
 const Sequelize = require("sequelize");
+const User = require("./user");
+const Post = require("./post");
 
 class Comment extends Sequelize.Model {
     static initiate(sequelize) {
@@ -8,6 +10,24 @@ class Comment extends Sequelize.Model {
                     type: Sequelize.INTEGER,
                     primaryKey: true,
                     autoIncrement: true,
+                },
+
+                userId: {
+                    type: Sequelize.INTEGER,
+
+                    references: {
+                        model: User,
+                        key: "id",
+                    },
+                },
+
+                postId: {
+                    type: Sequelize.INTEGER,
+
+                    references: {
+                        model: Post,
+                        key: "id",
+                    },
                 },
 
                 content: {
@@ -30,10 +50,12 @@ class Comment extends Sequelize.Model {
 
     static associate(db) {
         db.Comment.belongsTo(db.User, {
+            foreignKey: "userId",
             as: "CommentingUser",
         });
         db.Comment.belongsTo(db.Post, {
-            as: "CommentedPost",
+            foreignKey: "postId",
+            as: "CommentingPost",
         });
     }
 }

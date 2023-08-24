@@ -60,10 +60,9 @@ class User extends Sequelize.Model {
         });
         db.User.belongsToMany(db.Post, {
             through: 'Comments',
-            unique: false,
-            foreignKey: "CommentingUserId",
-            otherKey: "CommentedPostId",
-            as: "CommentedPosts",
+            foreignKey: 'userId',
+            otherKey: 'id',
+            as: 'UserComments'
         });
     }
 }
