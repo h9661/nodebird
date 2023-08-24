@@ -43,7 +43,7 @@ async function renderMain(req, res, next) {
         posts.map(async (post) => {
             post.LikingUsersId = post.LikingUsers?.map((u) => u.id) || [];
             post.Comments = await Comment.findAll({
-                where: { postId: post.id },
+                where: { CommentedPostId: post.id },
                 include: {
                     model: User,
                     attributes: ["id", "nick"],
