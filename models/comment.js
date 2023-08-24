@@ -50,12 +50,14 @@ class Comment extends Sequelize.Model {
 
     static associate(db) {
         db.Comment.belongsTo(db.User, {
+            name: "customUserIdForeignKey",
             foreignKey: "userId",
             as: "CommentingUser",
             onDelete: "CASCADE",
             onUpdate: "CASCADE",
         });
         db.Comment.belongsTo(db.Post, {
+            name: "customPostIdForeignKey",
             foreignKey: "postId",
             as: "CommentingPost",
             onDelete: "CASCADE",
