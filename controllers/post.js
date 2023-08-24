@@ -7,11 +7,17 @@ exports.afterUploadImage = (req, res) => {
     res.json({ url: `/images/${req.file.filename}` });
 };
 
+exports.afterUploadVideo = (req, res) => {
+    console.log(req.file);
+    res.json({ url: `/videos/${req.file.filename}` });
+};
+
 exports.uploadPost = async (req, res, next) => {
     try {
         const post = await Post.create({
             content: req.body.content,
-            img: req.body.url,
+            img: req.body.imgUrl,
+            video: req.body.videoUrl,
             UserId: req.user.id,
         });
         const hashtags = req.body.content.match(/#[^\s#]*/g);

@@ -9,17 +9,29 @@ const {
     likePost,
     unlikePost,
     addComment,
+    afterUploadVideo,
 } = require("../controllers/post");
 const router = express.Router();
 
-const upload = multer({
+const uploadImage = multer({
     dest: "uploads/images/",
     limits: {
         fieldSize: 10 * 1024 * 1024,
     },
 });
 
-router.post("/img", isLoggedIn, upload.single("img"), afterUploadImage);
+const uploadVideo = multer({
+    dest: "uploads/videos/",
+    limits: {
+        fieldSize: 100 * 1024 * 1024,
+    },
+});
+
+router.post("/img", isLoggedIn, uploadImage.single("img"), afterUploadImage);
+
+router.post("/video", isLoggedIn, uploadVideo.single("video"), afterUploadVideo);
+
+router.post("/", isLoggedIn, multer().none(), uploadPost);
 
 router.post("/", isLoggedIn, multer().none(), uploadPost);
 
