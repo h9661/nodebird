@@ -49,6 +49,17 @@
             {% if twit.img %}
             <div class="twit-img"><img src="{{twit.img}}" alt="섬네일"></div>
             {% endif %}
+            <hr>
+            {% for comment in twit.Comments %}
+            <div>
+                <div class="commenting-user">{{comment.CommentingUser.nick}}</div>
+                <input type="text" class="commenting-content" value="{{comment.content}}" readonly/>
+            </div>
+            {% endfor %} 
+            <div>
+                <input class="comment-content" cols="30" rows="10">
+                <button class="add-comment">댓글 등록</button>
+            </div>
         </div>
         {% endfor %}
     </div>
@@ -138,6 +149,25 @@
                 const postId = tag.parentNode.querySelector('.twit-id').value;
                 if(confirm('좋아요를 취소하겠습니까?')){
                     axios.post(`/post/${postId}/unlike`, { "myId": myId })
+                    .then(() => {
+                        location.reload();
+                    })
+                    .catch((err) => {
+                        console.error(err);
+                    })
+                }
+            }
+        })
+    })
+
+    document.querySelectorAll('.add-comment').forEach(function (tag) {
+        tag.addEventListener('click', function () {
+            const myId = document.querySelector('#my-id').value;
+            if(myId){
+                const postId = tag.parentNode.parentNode.querySelector('.twit-id').value;
+                const content = tag.parentNode.querySelector('.comment-content').value;
+                if(confirm('댓글을 등록하시겠습니까?')){
+                    axios.post(`/post/${postId}/comment`, { "myId": myId, "content": content })
                     .then(() => {
                         location.reload();
                     })
