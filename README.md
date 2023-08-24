@@ -15,6 +15,7 @@
 - [x] 게시글 좋아요 및 취소 추가.
 - [x] 게시글 삭제하기 추가.
 - [x] 좋아요 누른 게시글 보기 기능 추가.
+- [x] post에 comment 추가하기.
 
 ## 학습 정리
 ## dotenv
@@ -567,3 +568,185 @@ db.Post.findByPk(postId, {
 ## include(join) 할 때 attribute가 없으면 모든 속성을 다 가져온다.
 
 ## include(join)된 결과를 가져오고 싶다면 반드시 조회를 다시 해서 include해야만 한다.
+
+## N:M의 관계에서 다른 table의 정보도 가져오면서 관계에 있는 다른 column은 어떻게 가져올까?
+```javascript
+{
+  model: User,
+  attributes: ["id", "nick"],
+  as: "CommentingUsers",
+  through: {
+      attributes: ["content"],
+  },
+},
+```
+through 속성을 통해 가져올 수 있다.
+
+## N:M 관계에서 그 관계에 다른 column을 추가하려면 어떻게 해야 할까? 예제를 통해 알아보자.
+해당 관계에 `text`라는 컬럼을 추가하려면 `sequelize`에서는 관계를 표현하는 중간 테이블인 `Comments` 테이블에 `text` 컬럼을 추가하고 관계 모델들 간에 추가적인 설정을 해야 합니다. 아래는 이에 대한 예시 코드입니다.
+
+1. **Comments 테이블에 text 컬럼 추가:**
+
+```javascript
+// models/comments.js
+module.exports = (sequelize, DataTypes) => {
+  const Comments = sequelize.define('Comments', {
+    text: {
+      type: DataTypes.STRING, // 예시로 STRING 타입 사용
+      allowNull: false,
+    },
+    // 추가적인 컬럼들 정의 가능
+    // 예: createdAt: DataTypes.DATE,
+  });
+
+  return Comments;
+};
+```
+
+2. **User 모델과 Post 모델에 관계 설정 추가:**
+
+```javascript
+// models/user.js
+module.exports = (sequelize, DataTypes) => {
+  const User = sequelize.define('User', {
+    // User 모델의 속성 정의
+  });
+
+  User.associate = models => {
+    User.belongsToMany(models.Post, {
+      through: models.Comments, // 연결 테이블 지정
+      foreignKey: 'userId',     // 연결 테이블에서 사용자를 가리키는 외래 키
+      otherKey: 'postId',       // 연결 테이블에서 게시물을 가리키는 외래 키
+      as: 'CommentedPosts',     // 사용자 모델에서 사용할 이름
+    });
+  };
+
+  return User;
+};
+
+// models/post.js
+module.exports = (sequelize, DataTypes) => {
+  const Post = sequelize.define('Post', {
+    // Post 모델의 속성 정의
+  });
+
+  Post.associate = models => {
+    Post.belongsToMany(models.User, {
+      through: models.Comments, // 연결 테이블 지정
+      foreignKey: 'postId',     // 연결 테이블에서 게시물을 가리키는 외래 키
+      otherKey: 'userId',       // 연결 테이블에서 사용자를 가리키는 외래 키
+      as: 'CommentingUsers',    // 게시물 모델에서 사용할 이름
+    });
+  };
+
+  return Post;
+};
+```
+
+3. **관계 모델에 추가 컬럼 설정:**
+
+```javascript
+// models/comments.js
+module.exports = (sequelize, DataTypes) => {
+  const Comments = sequelize.define('Comments', {
+    text: {
+      type: DataTypes.STRING,
+      allowNull: false,
+    },
+  });
+
+  Comments.associate = models => {
+    Comments.belongsTo(models.User, {
+      foreignKey: 'userId', // 연결 테이블의 외래 키
+      as: 'CommentingUser', // 연결된 User 정보를 가져오는 이름
+    });
+
+    Comments.belongsTo(models.Post, {
+      foreignKey: 'postId', // 연결 테이블의 외래 키
+      as: 'CommentedPost',  // 연결된 Post 정보를 가져오는 이름
+    });
+  };
+
+  return Comments;
+};
+```
+
+위 코드에서 `Comments` 테이블에 `text` 컬럼을 추가하였고, User 모델과 Post 모델의 관계 설정에서 `through` 옵션을 `Comments`로 지정하여 중간 테이블을 사용하도록 설정하였습니다. 또한 `Comments` 모델에서 User와 Post에 대한 관계를 설정할 때, `foreignKey`를 사용하여 외래 키를 지정하고 연결된 정보를 가져올 이름인 `as`를 설정하였습니다.
+
+이렇게 하면 Comment와 관련된 text 컬럼이 추가된 중간 테이블을 사용하여 User와 Post 간의 N:M 관계에 정보를 추가할 수 있습니다.
+
+## sequelize를 통해 data를 가져오면, dataValus를 통해 colmun의 값을 가져올 수 있다.(as 키워드가 지정 안되었을 때)
+
+## 헷갈리는 부분을 아래에 정리해보겠다.
+
+1. **post, user, comment간의 관계**
+```javascript
+db.Post.belongsToMany(db.User, {
+    through: 'Comments',
+    foreignKey: 'postId',
+    otherKey: 'userId',
+    as: 'CommentingUsers'
+})
+
+db.User.belongsToMany(db.Post, {
+    through: 'Comments',
+    foreignKey: 'userId',
+    otherKey: 'postId',
+    as: 'CommentedPosts'
+});
+
+class Comment extends Sequelize.Model {
+  static initiate(sequelize) {
+      Comment.init(
+          {
+              content: {
+                  type: Sequelize.STRING(100),
+                  allowNull: false,
+              },
+          },
+          {
+              sequelize,
+              timestamps: true,
+              underscored: false,
+              modelName: "Comment",
+              tableName: "comments",
+              paranoid: false,
+              charset: "utf8mb4",
+              collate: "utf8mb4_general_ci",
+          }
+      );
+  }
+
+  static associate(db) {
+      db.Comment.belongsTo(db.User, {
+          foreignKey: "userId",
+          as: "CommentingUser",
+      });
+      db.Comment.belongsTo(db.Post, {
+          foreignKey: "postId",
+          as: "CommentedPost",
+      });
+  }
+}
+```
+
+이 때 어떤 `post`에 작성된 `comment`들을 가져오면서, 그 `comment`를 작성한 `user`의 정보는 어떻게 가져올까?
+다음과 같이 가져올 수 있다.
+
+```javascript
+const result = await Promise.all(
+  posts.map(async (post) => {
+      post.Comments = await Comment.findAll({
+          where: { postId: post.id },
+          include: {
+              model: User,
+              attributes: ["id", "nick"],
+              as: "CommentingUser",
+          },
+      });
+
+      return post;
+  })
+);
+```
+이거 하다가 배운건데 as 키워드가 사용되면, 항상 as 키워드로 가져와야 한다.
