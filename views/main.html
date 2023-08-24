@@ -62,7 +62,7 @@
             <hr>
             {% for comment in twit.Comments %}
             <div>
-                <div class="commenting-user">{{comment.CommentingUser.nick}}</div>
+                <div class="commenting-user">{{comment.User.nick}}</div>
                 <input type="text" class="commenting-content" value="{{comment.content}}" readonly/>
             </div>
             {% endfor %} 

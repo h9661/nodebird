@@ -44,17 +44,19 @@ async function renderMain(req, res, next) {
             post.LikingUsersId = post.LikingUsers?.map((u) => u.id) || [];
             post.Comments = await Comment.findAll({
                 where: { postId: post.id },
-                include: {
-                    model: User,
-                    attributes: ["id", "nick"],
-                    as: "CommentingUser",
-                },
+                order: [["createdAt", "DESC"]],
             });
+            
+            for(let comment of post.Comments){
+                comment.User = await User.findOne({
+                    where: { id: comment.userId },
+                    attributes: ["id", "nick"],
+                });
+            }
 
             return post;
         })
     );
-
     res.render("main", {
         title: "NodeBird",
         twits: result,
