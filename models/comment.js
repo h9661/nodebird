@@ -1,35 +1,9 @@
 const Sequelize = require("sequelize");
-const User = require("./user");
-const Post = require("./post");
 
 class Comment extends Sequelize.Model {
     static initiate(sequelize) {
         Comment.init(
             {
-                id: {
-                    type: Sequelize.INTEGER,
-                    primaryKey: true,
-                    autoIncrement: true,
-                },
-
-                userId: {
-                    type: Sequelize.INTEGER,
-
-                    references: {
-                        model: User,
-                        key: "id",
-                    },
-                },
-
-                postId: {
-                    type: Sequelize.INTEGER,
-
-                    references: {
-                        model: Post,
-                        key: "id",
-                    },
-                },
-
                 content: {
                     type: Sequelize.STRING(100),
                     allowNull: false,
@@ -50,16 +24,14 @@ class Comment extends Sequelize.Model {
 
     static associate(db) {
         db.Comment.belongsTo(db.User, {
-            name: "customUserIdForeignKey",
             foreignKey: "userId",
             as: "CommentingUser",
             onDelete: "CASCADE",
             onUpdate: "CASCADE",
         });
         db.Comment.belongsTo(db.Post, {
-            name: "customPostIdForeignKey",
             foreignKey: "postId",
-            as: "CommentingPost",
+            as: "CommentedPost",
             onDelete: "CASCADE",
             onUpdate: "CASCADE",
         });
