@@ -30,6 +30,5 @@ Comment.initiate(sequelize);
 User.associate(db);
 Hashtag.associate(db);
 Post.associate(db);
-Comment.associate(db);
 
 module.exports = db;

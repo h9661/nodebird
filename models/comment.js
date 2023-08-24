@@ -4,6 +4,38 @@ class Comment extends Sequelize.Model {
     static initiate(sequelize) {
         Comment.init(
             {
+                id: {
+                    type: Sequelize.INTEGER,
+                    primaryKey: true,
+                    autoIncrement: true,
+                },
+
+                userId:{
+                    type: Sequelize.INTEGER,
+                    allowNull: false,
+
+                    references: {
+                        model: "users",
+                        key: "id",
+                    },
+
+                    onDelete: "cascade",
+                    onUpdate: "cascade",
+                },
+
+                postId:{
+                    type: Sequelize.INTEGER,
+                    allowNull: false,
+
+                    references: {
+                        model: "posts",
+                        key: "id",
+                    },
+
+                    onDelete: "cascade",
+                    onUpdate: "cascade",
+                },
+
                 content: {
                     type: Sequelize.STRING(100),
                     allowNull: false,
@@ -20,21 +52,6 @@ class Comment extends Sequelize.Model {
                 collate: "utf8mb4_general_ci",
             }
         );
-    }
-
-    static associate(db) {
-        db.Comment.belongsTo(db.User, {
-            foreignKey: "userId",
-            as: "CommentingUser",
-            onDelete: "CASCADE",
-            onUpdate: "CASCADE",
-        });
-        db.Comment.belongsTo(db.Post, {
-            foreignKey: "postId",
-            as: "CommentedPost",
-            onDelete: "CASCADE",
-            onUpdate: "CASCADE",
-        });
     }
 }
 

@@ -58,12 +58,6 @@ class User extends Sequelize.Model {
             otherKey: 'postId',    // 연결 테이블에서 게시물을 가리키는 외래 키
             as: 'LikedPosts'       // 사용자 모델에서 사용할 이름
         });
-        db.User.belongsToMany(db.Post, {
-            through: 'Comments',
-            foreignKey: 'userId',
-            otherKey: 'postId',
-            as: 'UserComments',
-        });
     }
 }
 
