@@ -17,7 +17,8 @@
 - [x] 좋아요 누른 게시글 보기 기능 추가.
 - [x] post에 comment 추가하기.
 - [x] multer로 동영상 업로드 구현
-- [ ] 배포해서 여친이랑 써보기
+- [x] 배포해서 여친이랑 써보기
+- [x] recomment 기능 추가해보기
 
 ## 학습 정리
 ## dotenv
@@ -679,7 +680,7 @@ module.exports = (sequelize, DataTypes) => {
 
 ## sequelize를 통해 data를 가져오면, dataValus를 통해 colmun의 값을 가져올 수 있다.(as 키워드가 지정 안되었을 때)
 
-## 헷갈리는 부분을 아래에 정리해보겠다.
+## 헷갈리는 부분을 아래에 정리해보겠다. << 주의!!! 이거때문에 삽질 엄청함! 관계에서 새로운 column을 더 넣을 때 무시무시한 오류가 발생할 수도 있다. error 121 >> through 키워드를 사용 안하고 중간 테이블을 직접 생성하면 오류가 안날지도?.. 여러가지 방면으로 시도해봐야 할 것 같다.
 
 1. **post, user, comment간의 관계**
 ```javascript
