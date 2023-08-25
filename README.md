@@ -19,6 +19,7 @@
 - [x] multer로 동영상 업로드 구현
 - [x] 배포해서 여친이랑 써보기
 - [x] recomment 기능 추가해보기
+- [ ] hashtag 중복 있으면 오류발생. create 하기 전에 중복 제거 후 만들어야 함.
 
 ## 학습 정리
 ## dotenv
@@ -570,8 +571,6 @@ db.Post.findByPk(postId, {
 
 ## include(join) 할 때 attribute가 없으면 모든 속성을 다 가져온다.
 
-## include(join)된 결과를 가져오고 싶다면 반드시 조회를 다시 해서 include해야만 한다.
-
 ## N:M의 관계에서 다른 table의 정보도 가져오면서 관계에 있는 다른 column은 어떻게 가져올까?
 ```javascript
 {
@@ -680,7 +679,7 @@ module.exports = (sequelize, DataTypes) => {
 
 ## sequelize를 통해 data를 가져오면, dataValus를 통해 colmun의 값을 가져올 수 있다.(as 키워드가 지정 안되었을 때)
 
-## 헷갈리는 부분을 아래에 정리해보겠다. << 주의!!! 이거때문에 삽질 엄청함! 관계에서 새로운 column을 더 넣을 때 무시무시한 오류가 발생할 수도 있다. error 121 >> through 키워드를 사용 안하고 중간 테이블을 직접 생성하면 오류가 안날지도?.. 여러가지 방면으로 시도해봐야 할 것 같다.
+## 헷갈리는 부분을 아래에 정리해보겠다. << 주의!!! 이거때문에 삽질 엄청함! 관계에서 새로운 column을 더 넣을 때 무시무시한 오류가 발생할 수도 있다. error 121 >> through 키워드를 사용 안하고 중간 테이블을 직접 생성하면 오류가 안날지도?.. 여러가지 방면으로 시도해봐야 할 것 같다. n-1-m 관계와 n-m 관계를 다시 생각해봐야 할 것 같다. 아래에 있는게 n-m 관계에 있는 association에 뭘 더 추가한 거고, 현재가 n-1-m로 3개의 테이블을 만들어서 관리하는 거다.
 
 1. **post, user, comment간의 관계**
 ```javascript
