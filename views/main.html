@@ -63,7 +63,18 @@
             {% for comment in twit.Comments %}
             <div>
                 <div class="commenting-user">{{comment.User.nick}}</div>
+                <input type="hidden" class="comment-id" value="{{comment.id}}">
                 <input type="text" class="commenting-content" value="{{comment.content}}" readonly/>
+                <button class="recomment">대댓글</button>
+                <input type="text" class="recomment-content" placeholder="대댓글을 입력하세요." style="display: none;">
+                <button class="recomment-submit" style="display: none;">등록</button>
+                {% for recomment in comment.Recomments %}
+                <div>
+                    <div class="recommenting-user">{{recomment.User.nick}}</div>
+                    <input type="hidden" class="recomment-id" value="{{recomment.id}}">
+                    <input type="text" class="recommenting-content" value="{{recomment.content}}" readonly/>
+                </div>
+                {% endfor %}
             </div>
             {% endfor %} 
             <div>
@@ -205,5 +216,44 @@
             }
         })
     })
+
+    document.querySelectorAll('.recomment').forEach(function (tag) {
+        tag.addEventListener('click', function () {
+            const myId = document.querySelector('#my-id').value;
+            if(myId){
+                const recommentInputTag = tag.parentNode.querySelector('.recomment-content');
+                const recommentSubmitTag = tag.parentNode.querySelector('.recomment-submit');
+
+                // if recomment input tag is hidden then show it
+                if(recommentInputTag.style.display === 'none'){
+                    recommentInputTag.style.display = 'inline';
+                    recommentSubmitTag.style.display = 'inline';
+                } else {
+                    recommentInputTag.style.display = 'none';
+                    recommentSubmitTag.style.display = 'none';
+                }
+            }
+        })
+    })
+
+    document.querySelectorAll('.recomment-submit').forEach(function (tag){
+        tag.addEventListener('click', function () {
+            const myId = document.querySelector('#my-id').value;
+            if(myId){
+                const postId = tag.parentNode.parentNode.querySelector('.twit-id').value;
+                const commentId = tag.parentNode.querySelector('.comment-id').value;
+                const content = tag.parentNode.querySelector('.recomment-content').value;
+
+                axios.post(`/post/${postId}/comment/${commentId}/recomment`, { "myId": myId, "postId": postId, "commentId": commentId, "content": content })
+                .then(() => {
+                    location.reload();
+                })
+                .catch((err) => {
+                    console.error(err);
+                })
+            }
+        })
+    })
+
 </script>
 {% endblock %}
