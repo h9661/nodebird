@@ -10,32 +10,6 @@ class Comment extends Sequelize.Model {
                     autoIncrement: true,
                 },
 
-                userId:{
-                    type: Sequelize.INTEGER,
-                    allowNull: false,
-
-                    references: {
-                        model: "users",
-                        key: "id",
-                    },
-
-                    onDelete: "cascade",
-                    onUpdate: "cascade",
-                },
-
-                postId:{
-                    type: Sequelize.INTEGER,
-                    allowNull: false,
-
-                    references: {
-                        model: "posts",
-                        key: "id",
-                    },
-
-                    onDelete: "cascade",
-                    onUpdate: "cascade",
-                },
-
                 content: {
                     type: Sequelize.STRING(100),
                     allowNull: false,
@@ -52,6 +26,21 @@ class Comment extends Sequelize.Model {
                 collate: "utf8mb4_general_ci",
             }
         );
+    }
+
+    static associate(db) {
+        db.Comment.belongsTo(db.User, {
+            foreignKey: "userId",
+            targetKey: "id",
+        });
+        db.Comment.belongsTo(db.Post, {
+            foreignKey: "postId",
+            targetKey: "id",
+        });
+        db.Comment.hasMany(db.Recomment, {
+            foreignKey: "commentId",
+            sourceKey: "id",
+        });
     }
 }
 
