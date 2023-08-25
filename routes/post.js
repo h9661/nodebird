@@ -10,6 +10,7 @@ const {
     unlikePost,
     addComment,
     afterUploadVideo,
+    addRecomment,
 } = require("../controllers/post");
 const router = express.Router();
 
@@ -42,5 +43,7 @@ router.post("/:postId/like", isLoggedIn, likePost);
 router.post("/:postId/unlike", isLoggedIn, unlikePost);
 
 router.post("/:postId/comment", isLoggedIn, addComment);
+
+router.post("/:postId/comment/:commentId/recomment", isLoggedIn, addRecomment);
 
 module.exports = router;

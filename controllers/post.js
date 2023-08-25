@@ -1,6 +1,7 @@
 const Post = require("../models/post");
 const Hashtag = require("../models/hashtag");
 const Comment = require("../models/comment");
+const Recomment = require("../models/recomment");
 
 exports.afterUploadImage = (req, res) => {
     console.log(req.file);
@@ -86,6 +87,29 @@ exports.addComment = async (req, res, next) => {
             postId,
             userId,
             content,
+        });
+
+        res.send("success");
+    } catch (err) {
+        console.error(err);
+        next(err);
+    }
+};
+
+exports.addRecomment = async (req, res, next) => {
+    try {
+        let commentId = req.params.commentId;
+        let userId = req.body.myId;
+        let content = req.body.content;
+        let postId = req.body.postId;
+
+        console.log(commentId, userId, content, postId);
+
+        const recomment = await Recomment.create({
+            commentId,
+            userId,
+            content,
+            postId,
         });
 
         res.send("success");
