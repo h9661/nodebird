@@ -21,7 +21,9 @@ exports.uploadPost = async (req, res, next) => {
             video: req.body.videoUrl,
             UserId: req.user.id,
         });
-        const hashtags = req.body.content.match(/#[^\s#]*/g);
+        let hashtags = req.body.content.match(/#[^\s#]*/g);
+        hashtags = [... new Set(hashtags)]
+
         if (hashtags) {
             const result = await Promise.all(
                 hashtags.map((tag) => {
