@@ -19,7 +19,8 @@
 - [x] multer로 동영상 업로드 구현
 - [x] 배포해서 여친이랑 써보기
 - [x] recomment 기능 추가해보기
-- [ ] hashtag 중복 있으면 오류발생. create 하기 전에 중복 제거 후 만들어야 함.
+- [x] hashtag 중복 있으면 오류발생. create 하기 전에 중복 제거 후 만들어야 함.
+- [ ] what is next step?... 
 
 ## 학습 정리
 ## dotenv
@@ -770,8 +771,13 @@ t_word가 먼저 create 되었다면
 
 t_language create 시에 해당 에러가 발생.. 
 
- 
-
- 
-
 외래키 제약명은 fk_본테이블명_참조키테이블명_참조키 으로 바꿈 
+
+## Set()
+Set 객체는 자료형에 관계 없이 원시 값과 객체 참조 모두 유일한 값을 저장할 수 있습니다.
+
+examples: 
+```javascript
+const set1 = new Set([2, 2, 2, 4, 5, 'abc', 'abc']);
+console.log(set1); // Set(4) { 2, 4, 5, 'abc' }
+```
